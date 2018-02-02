@@ -20,3 +20,22 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+!/.idea/
+.idea/.name
+.idea/compiler.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
+WorkloadGen.iml
+target/generated-sources/
+!/.idea/libraries/Maven__commons_logging_commons_logging_1_2.xml
+!/.idea/libraries/Maven__org_slf4j_slf4j_simple_1_7_21.xml
+!/.idea/libraries/Maven__com_google_code_gson_gson_2_8_0.xml
+!/.idea/libraries/Maven__commons_codec_commons_codec_1_9.xml
+!/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_21.xml
+!/.idea/libraries/Maven__org_apache_httpcomponents_httpclient_4_5_3.xml
+!/.idea/libraries/Maven__org_apache_httpcomponents_httpcore_4_4_6.xml
+target/archive-tmp/
+target/maven-archiver/
+target/maven-status/

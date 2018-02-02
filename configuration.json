@@ -1,0 +1,39 @@
+{
+  "config":{
+    "generator" :{
+      "type" : "sine",
+      "period" : 120
+    },
+    "generator1" : {
+      "type" : "gaussian",
+      "mean" : 0.5,
+      "deviation" : 0.01
+
+    },"generator" : {
+      "type" : "mountain",
+      "ascent" : 120,
+      "plateau" : 43200,
+      "descent" : 120
+
+    },
+    "experiment":"test5",
+    "maxThreads" : 40,
+    "minOperations" :5 ,
+    "maxOperations" : 30,
+    "outputTime" : 5
+  },
+  "operations":[
+    {
+      "operationId": "get",
+      "weight":2,
+      "url": "https://httpbin.org/ip",
+      "method": "GET"
+    },
+    {
+      "operationId": "get1024",
+      "weight":0,
+      "url": "https://httpbin.org/bytes/1048576?seed=1",
+      "method": "GET"
+    }
+  ]
+}
