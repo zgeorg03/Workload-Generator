@@ -97,7 +97,7 @@ public class RequestsHandler implements Runnable{
                 logger.error(e.getLocalizedMessage());
             } catch (ExecutionException e) {
                     RealTimeOperationStats stats = operationStats.getOrDefault("-1", new RealTimeOperationStats("-1"));
-                    stats.update(10000, 503);
+                    stats.update(timeout, 503);
                     operationStats.putIfAbsent("-1", stats);
 
             }
@@ -108,11 +108,11 @@ public class RequestsHandler implements Runnable{
     public void execute(Operation operation) throws UnsupportedEncodingException {
 
         if(operation.getMethod().equalsIgnoreCase("POST")){
-            PostRequest postRequest = new PostRequest(operation.getOperationId(),operation.getUrl(),operation.getData(),10000);
+            PostRequest postRequest = new PostRequest(operation.getOperationId(),operation.getUrl(),operation.getData(),timeout);
             requests.submit(postRequest);
             countRealRequests++;
         }else if(operation.getMethod().equalsIgnoreCase("GET")){
-            GetRequest getRequest = new GetRequest(operation.getOperationId(),operation.getUrl(),10000);
+            GetRequest getRequest = new GetRequest(operation.getOperationId(),operation.getUrl(),timeout);
             requests.submit(getRequest);
             countRealRequests++;
         }
