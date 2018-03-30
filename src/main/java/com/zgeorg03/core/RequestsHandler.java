@@ -34,8 +34,10 @@ public class RequestsHandler implements Runnable{
     private int lastCountFinishedReqPerSecond;
     private double finishedRequestsPerSecond;
 
-    public RequestsHandler(Executor executor) {
+    private final int timeout;
+    public RequestsHandler(Executor executor, int timeout) {
         this.requests = new ExecutorCompletionService<>(executor);
+        this.timeout = timeout;
         executor.execute(this);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> onShutDown()));
@@ -94,7 +96,10 @@ public class RequestsHandler implements Runnable{
             } catch (InterruptedException e) {
                 logger.error(e.getLocalizedMessage());
             } catch (ExecutionException e) {
-                logger.error(e.getLocalizedMessage());
+                    RealTimeOperationStats stats = operationStats.getOrDefault("-1", new RealTimeOperationStats("-1"));
+                    stats.update(10000, 503);
+                    operationStats.putIfAbsent("-1", stats);
+
             }
         }
 
@@ -107,7 +112,7 @@ public class RequestsHandler implements Runnable{
             requests.submit(postRequest);
             countRealRequests++;
         }else if(operation.getMethod().equalsIgnoreCase("GET")){
-            GetRequest getRequest = new GetRequest(operation.getOperationId(),operation.getUrl(),1000);
+            GetRequest getRequest = new GetRequest(operation.getOperationId(),operation.getUrl(),10000);
             requests.submit(getRequest);
             countRealRequests++;
         }

@@ -23,7 +23,7 @@ public class Main {
 
     public static void main(String args[]) throws UnsupportedEncodingException {
 
-        String configurationFile = "configuration.json";
+        String configurationFile = "configuration-original.json";
         if(args.length>=1)
             configurationFile = args[0];
 
@@ -61,7 +61,7 @@ public class Main {
 
             ExecutorService executorService = Executors.newFixedThreadPool(configuration.getMaxThreads());
 
-            RequestsHandler requestsHandler = new RequestsHandler(executorService);
+            RequestsHandler requestsHandler = new RequestsHandler(executorService, 10000);
 
             OperationsHandler operationsHandler = new OperationsHandler(configuration, requestsHandler, printWriter);
 

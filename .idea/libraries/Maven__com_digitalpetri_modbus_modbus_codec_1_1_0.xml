@@ -1,13 +1,7 @@
 <component name="libraryTable">
   <library name="Maven: com.digitalpetri.modbus:modbus-codec:1.1.0">
-    <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/digitalpetri/modbus/modbus-codec/1.1.0/modbus-codec-1.1.0.jar!/" />
-    </CLASSES>
-    <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/com/digitalpetri/modbus/modbus-codec/1.1.0/modbus-codec-1.1.0-javadoc.jar!/" />
-    </JAVADOC>
-    <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/digitalpetri/modbus/modbus-codec/1.1.0/modbus-codec-1.1.0-sources.jar!/" />
-    </SOURCES>
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES />
   </library>
 </component>

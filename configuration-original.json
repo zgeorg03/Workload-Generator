@@ -24,15 +24,9 @@
   },
   "operations":[
     {
-      "operationId": "get",
-      "weight":2,
-      "url": "http://mandola.grid.ucy.ac.cy",
-      "method": "GET"
-    },
-    {
       "operationId": "get1024",
       "weight":0,
-      "url": "https://httpbin.org/bytes/1048576?seed=1",
+      "url": "https://httpbin.org/bytes/10485761?seed=1",
       "method": "GET"
     }
   ]

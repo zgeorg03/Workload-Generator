@@ -13,26 +13,26 @@
       "type" : "mountain",
       "ascent" : 120,
       "plateau" : 43200,
-      "descent" : 120
+      "descent" : 180
 
     },
-    "experiment":"test5",
+    "experiment":"test-mandola-geohash-80-more-hashes",
     "maxThreads" : 40,
     "minOperations" :5 ,
-    "maxOperations" : 30,
+    "maxOperations" : 80,
     "outputTime" : 5
   },
   "operations":[
     {
       "operationId": "get",
-      "weight":2,
-      "url": "https://httpbin.org/ip",
+      "weight":0,
+      "url": "http://mandola.grid.ucy.ac.cy/login",
       "method": "GET"
     },
     {
-      "operationId": "get1024",
-      "weight":0,
-      "url": "https://httpbin.org/bytes/1048576?seed=1",
+      "operationId": "geohash",
+      "weight":1,
+      "url": "http://mandola.grid.ucy.ac.cy/geohash?keys=&source=3&from=2017-10-01&to=2018-02-08&bounds=-77.51953125,-38.272688535980954,53.0859375,73.3782147793946&zoom=3&tags=ETHNICITY_NATIONALITY,POLITICS,RELIGIOUS,SEXUAL,SPORTS,OTHER",
       "method": "GET"
     }
   ]
