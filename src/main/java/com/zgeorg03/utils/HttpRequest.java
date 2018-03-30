@@ -24,6 +24,7 @@ public abstract  class HttpRequest implements Callable<HttpResponse> {
 
     protected HttpRequest(String id) {
         this.id = id;
+        //RequestConfig config = RequestConfig.custom().setTim(2*1000).build();
         client = HttpClientBuilder.create().build();
     }
     protected HttpRequest(String id, int connectionTimeout) {

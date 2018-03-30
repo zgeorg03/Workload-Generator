@@ -103,11 +103,11 @@ public class RequestsHandler implements Runnable{
     public void execute(Operation operation) throws UnsupportedEncodingException {
 
         if(operation.getMethod().equalsIgnoreCase("POST")){
-            PostRequest postRequest = new PostRequest(operation.getOperationId(),operation.getUrl(),operation.getData());
+            PostRequest postRequest = new PostRequest(operation.getOperationId(),operation.getUrl(),operation.getData(),10000);
             requests.submit(postRequest);
             countRealRequests++;
         }else if(operation.getMethod().equalsIgnoreCase("GET")){
-            GetRequest getRequest = new GetRequest(operation.getOperationId(),operation.getUrl());
+            GetRequest getRequest = new GetRequest(operation.getOperationId(),operation.getUrl(),1000);
             requests.submit(getRequest);
             countRealRequests++;
         }

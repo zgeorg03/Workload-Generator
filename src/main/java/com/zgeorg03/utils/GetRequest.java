@@ -22,6 +22,10 @@ public class GetRequest extends HttpRequest  {
         super("",connectionTimeout);
         httpGet  = new HttpGet(url);
     }
+    public GetRequest(String id, String url,int connectionTimeout) {
+        super(id,connectionTimeout);
+        httpGet  = new HttpGet(url);
+    }
 
     public HttpResponse call() throws Exception {
         long start = System.currentTimeMillis();

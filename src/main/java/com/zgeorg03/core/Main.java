@@ -11,7 +11,6 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -42,6 +41,15 @@ public class Main {
         String dateFull = new SimpleDateFormat("yyyy-MM-dd_hhmm") .format(new java.util.Date(System.currentTimeMillis()));
         String date = dateFull.substring(0,dateFull.length()-5);
 
+
+
+        /**
+        BasicCookieStore cookieStore = new BasicCookieStore();
+        BasicClientCookie cookie = new BasicClientCookie("connect.sid", "s%3A1RDgG0iUAjQ5iWSAjRcDk6v-EHbcidVD.tBfy4%2BCsfRBgbtpD4WCXCkdHiaiAwLs4OQLFfh57hak");
+        cookie.setDomain("mandola.grid.ucy.ac.cy");
+        cookie.setPath("/");
+        cookieStore.addCookie(cookie);
+         **/
         try {
 
             Configuration configuration = ConfigurationLoader.load(configurationFile);

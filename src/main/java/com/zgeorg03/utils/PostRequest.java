@@ -23,6 +23,12 @@ public class PostRequest extends HttpRequest {
         httpPost  = new HttpPost(url);
         httpPost.setEntity(new UrlEncodedFormEntity(params));
     }
+    public PostRequest(String id,String url, List<NameValuePair> params,int timeout) throws UnsupportedEncodingException {
+        super(id,timeout);
+        client = HttpClientBuilder.create().build();
+        httpPost  = new HttpPost(url);
+        httpPost.setEntity(new UrlEncodedFormEntity(params));
+    }
 
     public HttpResponse call() throws Exception {
         long start = System.currentTimeMillis();
