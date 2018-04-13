@@ -30,7 +30,7 @@ public abstract  class HttpRequest implements Callable<HttpResponse> {
     protected HttpRequest(String id, int connectionTimeout) {
         this.id=id;
         client = HttpClientBuilder.create().setDefaultRequestConfig(
-                RequestConfig.custom().setConnectTimeout(connectionTimeout).build()
+                RequestConfig.custom().setConnectTimeout(connectionTimeout).setConnectionRequestTimeout(connectionTimeout).setSocketTimeout(connectionTimeout).build()
         ).build();
     }
     protected String readInputStream(InputStream inputStream) throws IOException {
