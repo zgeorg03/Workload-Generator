@@ -21,9 +21,10 @@ import java.util.concurrent.Executors;
 public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String args[]) throws UnsupportedEncodingException {
+    public static void main(String args[]) {
 
-        String configurationFile = "configuration-original.json";
+        String configurationFile ="configuration.json";
+
         if(args.length>=1)
             configurationFile = args[0];
 
@@ -61,7 +62,7 @@ public class Main {
 
             ExecutorService executorService = Executors.newFixedThreadPool(configuration.getMaxThreads());
 
-            RequestsHandler requestsHandler = new RequestsHandler(executorService, 100);
+            RequestsHandler requestsHandler = new RequestsHandler(executorService, 10000);
 
             OperationsHandler operationsHandler = new OperationsHandler(configuration, requestsHandler, printWriter);
 

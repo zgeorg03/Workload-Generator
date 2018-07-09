@@ -96,9 +96,9 @@ public class RequestsHandler implements Runnable{
             } catch (InterruptedException e) {
                 logger.error(e.getLocalizedMessage());
             } catch (ExecutionException e) {
-                    RealTimeOperationStats stats = operationStats.getOrDefault("-1", new RealTimeOperationStats("-1"));
+                    RealTimeOperationStats stats = operationStats.getOrDefault("TimeOut", new RealTimeOperationStats("TimeOut"));
                     stats.update(timeout, 503);
-                    operationStats.putIfAbsent("-1", stats);
+                    operationStats.putIfAbsent("TimeOut", stats);
 
             }
         }

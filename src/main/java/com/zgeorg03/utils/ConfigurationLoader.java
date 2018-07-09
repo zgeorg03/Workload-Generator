@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +32,33 @@ public class ConfigurationLoader {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationLoader.class);
 
+
+    public static Configuration load(InputStream stream) throws Exception {
+
+        JsonParser parser = new JsonParser();
+        try {
+            JsonObject root = parser.parse(new InputStreamReader(stream)).getAsJsonObject();
+            JsonObject configObj= root.getAsJsonObject("config");
+            JsonArray operations= root.getAsJsonArray("operations");
+
+            List<Operation> operationList = loadOperations(operations);
+            Config config = loadConfig(configObj);
+
+
+            Configuration configuration = new Configuration(operationList, config);
+            logger.info("Using configuration in classpath!");
+            return configuration ;
+        } catch (FileNotFoundException e) {
+            logger.error(e.getLocalizedMessage());
+            if(logger.isDebugEnabled())
+                e.printStackTrace();
+            throw new Exception();
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new Exception();
+        }
+
+    }
     public static Configuration load(String file) throws Exception {
         JsonParser parser = new JsonParser();
         try {
@@ -46,9 +74,8 @@ public class ConfigurationLoader {
             return configuration ;
         } catch (FileNotFoundException e) {
             logger.error(e.getLocalizedMessage());
-            if(logger.isDebugEnabled())
-                e.printStackTrace();
-            throw new Exception();
+            logger.info("File not found in path. Trying in classpath");
+            return ConfigurationLoader.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(file));
         }catch (Exception e){
             e.printStackTrace();
             throw new Exception();
