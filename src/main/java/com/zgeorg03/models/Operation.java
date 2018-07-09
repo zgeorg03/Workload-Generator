@@ -2,6 +2,8 @@ package com.zgeorg03.models;
 
 import org.apache.http.NameValuePair;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -14,10 +16,16 @@ public class Operation {
     private final String method;
     private final List<NameValuePair> data;
 
-    public Operation(String operationId, int weight, String url, String method, List<NameValuePair> data) {
+    public Operation(String operationId, int weight, String url, String method, List<NameValuePair> data) throws UnsupportedEncodingException {
         this.operationId = operationId;
         this.weight = weight;
-        this.url = url;
+        String t[] = url.split("\\?");
+        if(t.length>1) {
+            String encode = URLEncoder.encode(t[1],"UTF-8");
+            System.out.println(encode);
+            this.url = t[0]+"?"+encode;
+        }else
+            this.url = url;
         this.method = method;
         this.data = data;
     }

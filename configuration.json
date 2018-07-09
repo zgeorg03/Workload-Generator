@@ -25,9 +25,15 @@
   },
   "operations":[
     {
-      "operationId": "get1024",
+      "operationId": "q0",
+      "weight":0,
+      "url": "http://212.101.173.38/2018/?q=3",
+      "method": "GET"
+    },
+    {
+      "operationId": "q1",
       "weight":1,
-      "url": "http://212.101.173.38/2018/",
+      "url": "http://10.16.3.150:9090/api/v1/query?query=netdata_system_cpu_percentage_average{dimension='system'}",
       "method": "GET"
     }
   ]

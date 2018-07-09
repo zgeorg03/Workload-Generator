@@ -16,10 +16,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -114,7 +111,7 @@ public class ConfigurationLoader {
         return new Config(generator, experiment, operationId, minOperations, maxOperations,  outputTime, timeOut);
     }
 
-    private static List<Operation> loadOperations(JsonArray operations){
+    private static List<Operation> loadOperations(JsonArray operations) throws UnsupportedEncodingException {
         List<Operation> operationList = new LinkedList<>();
         for(int i=0;i<operations.size();i++){
             JsonObject operation = operations.get(i).getAsJsonObject();
