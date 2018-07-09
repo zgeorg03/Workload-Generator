@@ -95,11 +95,15 @@ public class Configuration {
         sb.append("\n#\tThreads="+config.getMaxThreads());
         sb.append("\n#\tMinOperations="+config.getMinOperations());
         sb.append("\n#\tMaxOperations="+config.getMaxOperations());
+        sb.append("\n#\tTimeOut="+config.getTimeOut());
         sb.append("\n#\tOutputTime="+config.getOutputTime());
         sb.append("\n");
         return sb.toString();
 
 
+    }
+    public int getTimeOut(){
+        return config.getTimeOut();
     }
 
     public void setDate(String date) {

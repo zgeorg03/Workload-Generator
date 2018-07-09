@@ -62,7 +62,7 @@ public class Main {
 
             ExecutorService executorService = Executors.newFixedThreadPool(configuration.getMaxThreads());
 
-            RequestsHandler requestsHandler = new RequestsHandler(executorService, 10000);
+            RequestsHandler requestsHandler = new RequestsHandler(executorService, configuration.getTimeOut());
 
             OperationsHandler operationsHandler = new OperationsHandler(configuration, requestsHandler, printWriter);
 

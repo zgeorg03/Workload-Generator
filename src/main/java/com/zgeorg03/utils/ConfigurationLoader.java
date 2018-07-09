@@ -108,9 +108,10 @@ public class ConfigurationLoader {
         int operationId = config.get("maxThreads").getAsInt();
         int minOperations = config.get("minOperations").getAsInt();
         int outputTime = config.get("outputTime").getAsInt()*1000;
+        int timeOut = config.get("timeOut").getAsInt()*1000;
         int maxOperations = config.get("maxOperations").getAsInt();
         String experiment = config.get("experiment").getAsString();
-        return new Config(generator, experiment, operationId, minOperations, maxOperations,  outputTime);
+        return new Config(generator, experiment, operationId, minOperations, maxOperations,  outputTime, timeOut);
     }
 
     private static List<Operation> loadOperations(JsonArray operations){
