@@ -22,7 +22,6 @@ public class Operation {
         String t[] = url.split("\\?");
         if(t.length>1) {
             String encode = URLEncoder.encode(t[1],"UTF-8");
-            System.out.println(encode);
             this.url = t[0]+"?"+encode;
         }else
             this.url = url;
