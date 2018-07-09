@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -105,14 +106,14 @@ public class RequestsHandler implements Runnable{
 
     }
 
-    public void execute(Operation operation) throws UnsupportedEncodingException {
+    public void execute(Operation operation) throws UnsupportedEncodingException, URISyntaxException {
 
         if(operation.getMethod().equalsIgnoreCase("POST")){
             PostRequest postRequest = new PostRequest(operation.getOperationId(),operation.getUrl(),operation.getData(),timeout);
             requests.submit(postRequest);
             countRealRequests++;
         }else if(operation.getMethod().equalsIgnoreCase("GET")){
-            GetRequest getRequest = new GetRequest(operation.getOperationId(),operation.getUrl(),timeout);
+            GetRequest getRequest = new GetRequest(operation.getOperationId(),operation.getUrl(),timeout, operation.getData());
             requests.submit(getRequest);
             countRealRequests++;
         }

@@ -2,7 +2,7 @@
 A workload generator for web-based applications
 
 ## Instructions
-Make sure you have increase the maximum number of open files, using the following command:
+\[Optional\]  Increase the maximum number of open files, using the following command:
 ```bash
 ulimit -n 4096
 ```
@@ -27,6 +27,7 @@ This json file describes the operations and the type of the workload to be execu
 		"maxThreads" : 64,
 		"minOperations" :10 ,
 		"maxOperations" : 50,
+		"timeOut" : 10,
 		"outputTime" : 5
 }
 ```
@@ -48,8 +49,25 @@ You should specify in the configuration file at least one operation. The operati
 ```
 In the above example we specify a POST request to a CouchBase server. Note that data field is necessary and contains the N1QL query to be executed. We also specify the weight of this operations, used for the random execution of multiple operations.
 
+The following example uses a GET request to retrieve the cpu.system utilization from a Prometheus host.
+
+```json
+{
+	"operationId": "getOperation",
+		"weight":1,
+		"url": "http://10.16.3.150:9090/api/v1/query",
+		"method": "GET",
+		"data": {
+		    "query": "sum(netdata_system_cpu_percentage_average{dimension='system'})"
+		}
+}
+```
+In the above example we specify a POST request to a CouchBase server. Note that data field is necessary and contains the N1QL query to be executed. We also specify the weight of this operations, used for the random execution of multiple operations.
+
+
+
 ###  Workload Types
-Currently we support 2 types of workloads.
+Currently we support 3 types of workload.
 
 #### Gaussian
 Every second the throughput of operations is random number from the Gaussian Distribution.
@@ -85,3 +103,4 @@ There are 3 phases.
 In this example the ascending phase is 2 minutes in which the throughput increases linearly.
 After 2 minutes, throughput remains for 5 minutes around 100% and finally for 2 minutes
 it decreases linearly to zero. The process is repeated infinitely.
+

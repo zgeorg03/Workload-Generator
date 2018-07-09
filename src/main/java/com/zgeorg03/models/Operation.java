@@ -48,4 +48,5 @@ public class Operation {
     public int getWeight() {
         return weight;
     }
+
 }

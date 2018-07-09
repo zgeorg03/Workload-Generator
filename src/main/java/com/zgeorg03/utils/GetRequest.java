@@ -1,7 +1,12 @@
 package com.zgeorg03.utils;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+
+import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * Created by zgeorg03 on 4/13/17.
@@ -9,22 +14,33 @@ import org.apache.http.client.methods.HttpGet;
 public class GetRequest extends HttpRequest  {
     private HttpGet httpGet;
 
-    public GetRequest(String id, String url) {
+    private final List<NameValuePair> params;
+
+    public GetRequest(String id, String url, List<NameValuePair> params) throws URISyntaxException {
         super(id);
-        httpGet  = new HttpGet(url);
+        this.params = params;
+        URIBuilder uriBuilder = new URIBuilder().addParameters(params);
+        httpGet = new HttpGet(uriBuilder.build());
     }
 
-    public GetRequest(String url) {
+
+    public GetRequest(String url, List<NameValuePair> params) throws URISyntaxException {
         super("");
-        httpGet  = new HttpGet(url);
+        this.params = params;
+        URIBuilder uriBuilder = new URIBuilder(url).addParameters(params);
+        httpGet = new HttpGet(uriBuilder.build());
     }
-    public GetRequest(String url,int connectionTimeout) {
+    public GetRequest(String url, int connectionTimeout, List<NameValuePair> params) throws URISyntaxException {
         super("",connectionTimeout);
-        httpGet  = new HttpGet(url);
+        this.params = params;
+        URIBuilder uriBuilder = new URIBuilder(url).addParameters(params);
+        httpGet = new HttpGet(uriBuilder.build());
     }
-    public GetRequest(String id, String url,int connectionTimeout) {
+    public GetRequest(String id, String url, int connectionTimeout, List<NameValuePair> params) throws URISyntaxException {
         super(id,connectionTimeout);
-        httpGet  = new HttpGet(url);
+        this.params = params;
+        URIBuilder uriBuilder = new URIBuilder(url).addParameters(params);
+        httpGet = new HttpGet(uriBuilder.build());
     }
 
     public HttpResponse call() throws Exception {
