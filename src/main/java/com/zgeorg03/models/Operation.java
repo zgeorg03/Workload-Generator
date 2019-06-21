@@ -1,52 +1,40 @@
 package com.zgeorg03.models;
 
-import org.apache.http.NameValuePair;
+public abstract class Operation {
+    protected  String id;
+    protected  int weight;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.List;
+    @Override
+    public String toString() {
+        return "Operation{" +
+                "id='" + id + '\'' +
+                ", weight=" + weight +
+                '}';
+    }
 
-/**
- * Created by zgeorg03 on 4/14/17.
- */
-public class Operation {
-    private final String operationId;
-    private final int weight;
-    private final String url;
-    private final String method;
-    private final List<NameValuePair> data;
+    public String getId() {
+        return id;
+    }
 
-    public Operation(String operationId, int weight, String url, String method, List<NameValuePair> data) throws UnsupportedEncodingException {
-        this.operationId = operationId;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setWeight(int weight) {
         this.weight = weight;
-        String t[] = url.split("\\?");
-        if(t.length>1) {
-            String encode = URLEncoder.encode(t[1],"UTF-8");
-            this.url = t[0]+"?"+encode;
-        }else
-            this.url = url;
-        this.method = method;
-        this.data = data;
     }
 
-    public String getOperationId() {
-        return operationId;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    public List<NameValuePair> getData() {
-        return data;
-    }
 
     public int getWeight() {
         return weight;
+    }
+
+    public Operation(){
+
+    }
+    public Operation(String operationId, int weight) {
+        this.id = operationId;
+        this.weight = weight;
     }
 
 }

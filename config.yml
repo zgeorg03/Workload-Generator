@@ -1,0 +1,60 @@
+experiment: test-1
+threads: 20
+outputTime: 2000
+minOperationsPerSec: 5
+maxOperationsPerSec: 60
+timeout: 10000 #ms
+
+generators:
+    - id: steady_low
+      duration: 30
+      type: gaussian
+      mean: 0.5
+      sdev: 0.05 #
+      minOperationsPerSec: 10
+      maxOperationsPerSec: 20
+
+    - id: steady_mid
+      duration: 30
+      type: gaussian
+      mean: 0.5
+      sdev: 0.05 #
+      minOperationsPerSec: 15
+      maxOperationsPerSec: 30
+
+    - id: steady_high
+      duration: 30
+      type: gaussian
+      mean: 0.5
+      sdev: 0.05 #
+      minOperationsPerSec: 20
+      maxOperationsPerSec: 40
+
+    - id: sine
+      type: sine
+      duration: 60
+      period: 30
+
+    - id: ascent
+      type: mountain
+      duration: 900
+      ascent: 900 #sec
+      plateau: 300 #sec
+      descent: 300 #sec
+
+    - id: descent
+      type: mountain
+      duration: 60
+      ascent: 0 #sec
+      plateau: 0 #sec
+      descent: 60 #sec
+
+sequence:
+  - ascent
+
+operations:
+    - !GET {
+        id: get-sm,
+        weight: 1,
+        url: "https://httpbin.org/get"
+    }

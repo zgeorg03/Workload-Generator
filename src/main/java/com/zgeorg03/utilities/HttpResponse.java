@@ -1,8 +1,9 @@
-package com.zgeorg03.utils;
+package com.zgeorg03.utilities;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 
 /**
  * Created by zgeorg03 on 4/13/17.
@@ -37,11 +38,12 @@ public class HttpResponse {
         return id;
     }
 
-    public JsonObject getJsonReply() {
-        JsonParser parser = new JsonParser();
+    public JsonNode getJsonReply() {
+        ObjectMapper parser = new ObjectMapper();
         try {
-            return parser.parse(body).getAsJsonObject();
-        }catch (JsonParseException ex){
+            return parser.readTree(body);
+        } catch (IOException e) {
+            e.printStackTrace();
             return null;
         }
     }

@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Created by zgeorg03 on 4/20/17.
  */
-public class MountainGenerator extends Generator{
+public class MountainGenerator extends AbstractGenerator{
 
     private long start;
     private boolean firstTime=true;

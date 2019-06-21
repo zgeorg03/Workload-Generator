@@ -7,9 +7,10 @@ public class RealTimeOperationStats {
     private final String id;
     private long count;
     private long avgDuration;
-    private long minDuration =Long.MAX_VALUE;
+    private long minDuration = Long.MAX_VALUE;
     private long maxDuration = Long.MIN_VALUE;
     private long sum;
+
 
     private long countSuccessStatus;
     private long countRedirectionStatus;
@@ -28,6 +29,8 @@ public class RealTimeOperationStats {
         if(duration>maxDuration)
             maxDuration=duration;
         avgDuration = sum/count;
+
+
         if(statusCode<300)
             countSuccessStatus++;
         else if(statusCode<400)
@@ -38,7 +41,6 @@ public class RealTimeOperationStats {
             countServerErrorStatus++;
 
     }
-
     public long getAvgDuration() {
         return avgDuration;
     }
@@ -83,8 +85,8 @@ public class RealTimeOperationStats {
     public String toString() {
         return  id +
                 ": count=" + count +
-                ", avg_latency=" + avgDuration +
                 ", min_latency=" + minDuration +
+                ", avg_latency=" + avgDuration +
                 ", max_latency=" + maxDuration +
                 ", success=" + countSuccessStatus +
                 ", redirection=" + countRedirectionStatus +

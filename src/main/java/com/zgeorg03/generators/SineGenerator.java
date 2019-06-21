@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Created by zgeorg03 on 4/14/17.
  */
-public class SineGenerator extends Generator {
+public class SineGenerator extends AbstractGenerator {
     private boolean firstTime =true;
     private long start;
 
@@ -22,7 +22,7 @@ public class SineGenerator extends Generator {
             firstTime = false;
         }
         time-=start;
-        float y = 0.5f+(float) Math.sin(2*Math.PI*time/ period)/2;
+        float y = 0.5f+(float) Math.sin(2* Math.PI*time/ period)/2;
         return y;
     }
 }

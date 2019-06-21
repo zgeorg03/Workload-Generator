@@ -6,19 +6,20 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Created by zgeorg03 on 4/14/17.
  */
-public class GaussianGenerator extends Generator {
+public class GaussianGenerator extends AbstractGenerator {
     private final Random random = new Random(System.currentTimeMillis());
-    private final float mean;
-    private final float deviation;
-    public GaussianGenerator(AtomicReference<Float> throughput, float mean, float deviation) {
+    private final double mean;
+    private final double sdev;
+
+    public GaussianGenerator(AtomicReference<Float> throughput, double mean, double sdev) {
         super(throughput, "gaussian");
         this.mean = mean;
-        this.deviation = deviation;
+        this.sdev = sdev;
     }
 
     @Override
     public float generateLoad(long time) {
-        float r = (float) (random.nextGaussian() * deviation + mean);
+        float r = (float) (random.nextGaussian() * sdev + mean);
         if(r>1)
             r=1;
         if(r<0)

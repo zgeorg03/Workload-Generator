@@ -1,10 +1,11 @@
-package com.zgeorg03.core;
+package com.zgeorg03;
 
-import com.zgeorg03.models.Operation;
+import com.zgeorg03.models.PercentileStats;
 import com.zgeorg03.models.RealTimeOperationStats;
-import com.zgeorg03.utils.GetRequest;
-import com.zgeorg03.utils.HttpResponse;
-import com.zgeorg03.utils.PostRequest;
+import com.zgeorg03.utilities.GetRequest;
+import com.zgeorg03.utilities.HttpRequest;
+import com.zgeorg03.utilities.HttpResponse;
+import com.zgeorg03.utilities.PostRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * Created by zgeorg03 on 4/13/17.
  */
-public class RequestsHandler implements Runnable{
+public class RequestsHandler implements Runnable {
     private final Logger logger=  LoggerFactory.getLogger(RequestsHandler.class);
     private final ExecutorCompletionService<HttpResponse> requests;
     private final Map<String,RealTimeOperationStats> operationStats=new HashMap<>();
@@ -36,6 +37,9 @@ public class RequestsHandler implements Runnable{
     private double finishedRequestsPerSecond;
 
     private final int timeout;
+
+    private PercentileStats percentileStats = new PercentileStats();
+
     public RequestsHandler(Executor executor, int timeout) {
         this.requests = new ExecutorCompletionService<>(executor);
         this.timeout = timeout;
@@ -49,7 +53,7 @@ public class RequestsHandler implements Runnable{
 
     }
 
-    public String log(long lastLog,long now,float throughput, int min, int max){
+    public String log(long lastLog, long now, float throughput, int min, int max){
         String date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
                 .format(new java.util.Date(System.currentTimeMillis()));
         String configuredRPS = String.format("%.2f%%",(throughput*100));
@@ -88,61 +92,71 @@ public class RequestsHandler implements Runnable{
                 countFinishedReqPerSecond++;
                 HttpResponse httpResponse = future.get();
                 int status = httpResponse.getStatus();
-
                 String id = httpResponse.getId();
                 RealTimeOperationStats stats = operationStats.getOrDefault(id,new RealTimeOperationStats(id));
                 stats.update(httpResponse.getDuration(), status);
+                //percentileStats.update(id,httpResponse.getDuration());
                 operationStats.putIfAbsent(id,stats);
 
             } catch (InterruptedException e) {
                 logger.error(e.getLocalizedMessage());
             } catch (ExecutionException e) {
+                e.printStackTrace();
                     RealTimeOperationStats stats = operationStats.getOrDefault("TimeOut", new RealTimeOperationStats("TimeOut"));
                     stats.update(timeout, 503);
                     operationStats.putIfAbsent("TimeOut", stats);
 
+            }catch (Exception ex){
+                ex.printStackTrace();
             }
         }
 
     }
 
-    public void execute(Operation operation) throws UnsupportedEncodingException, URISyntaxException {
+    public void execute(HttpRequest operation) throws UnsupportedEncodingException, URISyntaxException {
 
-        if(operation.getMethod().equalsIgnoreCase("POST")){
-            PostRequest postRequest = new PostRequest(operation.getOperationId(),operation.getUrl(),operation.getData(),timeout);
-            requests.submit(postRequest);
+        if(operation instanceof PostRequest ){
+            requests.submit((PostRequest)operation);
             countRealRequests++;
-        }else if(operation.getMethod().equalsIgnoreCase("GET")){
-            GetRequest getRequest = new GetRequest(operation.getOperationId(),operation.getUrl(),timeout, operation.getData());
-            requests.submit(getRequest);
+        }else if(operation instanceof GetRequest){
+            requests.submit((GetRequest)operation);
             countRealRequests++;
+        }else{
+            logger.info("Unsupported requests");
         }
     }
 
     public String logCsv(long lastLog, long now, float throughput, int min, int max) {
+        if(operationStats.isEmpty())
+            return "";
 
         double diff = (now-lastLog)/1000d;
         String configRequestsPerSecond = String.format("%.2f",(min+(max-min)*throughput));
-        String average_latency = String.format("%.2f",operationStats.values().stream().mapToLong(x->x.getAvgDuration()).average().getAsDouble());
         String min_latency = String.format("%d",operationStats.values().stream().mapToLong(x->x.getMinDuration()).min().getAsLong());
+        String average_latency = String.format("%.2f",operationStats.values().stream().mapToLong(x->x.getAvgDuration()).average().getAsDouble());
         String max_latency = String.format("%d",operationStats.values().stream().mapToLong(x->x.getMaxDuration()).max().getAsLong());
+
+        //String median_latency = String.format("%.2f",percentileStats.getM.stream().mapToLong(x->x.getMedian()).average().getAsDouble());
+        //String p99 = String.format("%.2f",operationStats.values().stream().mapToLong(x->x.getP99()).average().getAsDouble());
         String success_err = String.format("%.2f",operationStats.values().stream().mapToLong(x->x.getCountSuccessStatus()).sum()/diff);
         String redir = String.format("%.2f",operationStats.values().stream().mapToLong(x->x.getCountRedirectionStatus()).sum()/diff);
         String clie_err = String.format("%.2f",operationStats.values().stream().mapToLong(x->x.getCountClientErrorStatus()).sum()/diff);
         String serv_err = String.format("%.2f",operationStats.values().stream().mapToLong(x->x.getCountServerErrorStatus()).sum()/diff);
 
         String throughputPerSecond = String.format("%.2f",operationStats.values().stream().mapToLong(RealTimeOperationStats::getCount).sum()/diff);
+        System.out.println(throughputPerSecond);
+
 
         realRequestsPerSecond = ((float)countRealRequests-lastCountRealRequests)/diff;
         String realRequestsPerSecondStr = String.format("%.2f",realRequestsPerSecond);
 
 
-        return  now + "\t"
+        return  String.format("%.4f",((double)now/1000f)) + "\t"
                 + configRequestsPerSecond +"\t"
                 + realRequestsPerSecondStr +"\t"
                 + throughputPerSecond +"\t"
-                + average_latency +"\t"
                 + min_latency +"\t"
+                + average_latency +"\t"
                 + max_latency +"\t"
                 + success_err +"\t"
                 + redir +"\t"
