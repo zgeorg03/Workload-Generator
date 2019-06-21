@@ -13,10 +13,7 @@ import java.io.InputStream;
 
 public class ConfigurationLoader {
     public static Configuration load(String s) throws FileNotFoundException {
-        Constructor constructor = new Constructor(Operation.class);
-        constructor.addTypeDescription(new TypeDescription(GetRequest.class, new Tag("!GET")));
-        constructor.addTypeDescription(new TypeDescription(PostRequest.class, new Tag("!POST")));
-        Yaml yaml = new Yaml(constructor);
+        Yaml yaml = new Yaml();
         InputStream in = new FileInputStream(new File(s));
         Configuration configuration = yaml.loadAs(in,Configuration.class);
         return configuration;

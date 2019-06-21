@@ -3,7 +3,7 @@ threads: 20
 outputTime: 2000
 minOperationsPerSec: 5
 maxOperationsPerSec: 60
-timeout: 10000 #ms
+timeout: 5000 #ms
 
 generators:
     - id: steady_low
@@ -53,8 +53,12 @@ sequence:
   - ascent
 
 operations:
-    - !GET {
-        id: get-sm,
-        weight: 1,
-        url: "https://httpbin.org/get"
-    }
+  - id: get-sm
+    weight: 1
+    method: GET
+    url: "https://httpbin.org/get"
+
+  - id: get-mid
+    weight: 3
+    method: GET
+    url: "https://httpbin.org/get"

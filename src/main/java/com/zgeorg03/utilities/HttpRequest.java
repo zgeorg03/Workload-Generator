@@ -3,6 +3,7 @@ package com.zgeorg03.utilities;
 import com.zgeorg03.models.Operation;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
@@ -17,12 +18,7 @@ import java.util.concurrent.Callable;
  * Created by zgeorg03 on 4/13/17.
  */
 public abstract  class HttpRequest  extends Operation implements Callable<HttpResponse> {
-    protected static final CloseableHttpClient
-            client = HttpClientBuilder.create()
-                    .setMaxConnPerRoute(100)
-                    .setMaxConnTotal(100)
-                    .build();
-             ;
+    protected CloseableHttpClient client;
     protected  String url;
     protected  String id;
 
@@ -32,22 +28,23 @@ public abstract  class HttpRequest  extends Operation implements Callable<HttpRe
 
     }
 
-    protected HttpRequest(String id, int weight , String url) {
+    protected HttpRequest(String id, int weight , String url,int timeout) {
         super(id,weight);
         this.id = id;
         this.url = url;
         //RequestConfig config = RequestConfig.custom().setTim(2*1000).build();
         //client = HttpClientBuilder.create().build();
+        RequestConfig.Builder requestBuilder = RequestConfig.custom();
+        requestBuilder.setConnectTimeout(timeout);
+        requestBuilder.setConnectionRequestTimeout(timeout);
+        requestBuilder.setSocketTimeout(timeout);
+         client = HttpClientBuilder.create()
+                .setMaxConnPerRoute(100)
+                .setMaxConnTotal(100)
+                .setDefaultRequestConfig(requestBuilder.build())
+                .build();
     }
-    protected HttpRequest(String id,int weight, int connectionTimeout, String url) {
-        super(id,weight);
-        this.id=id;
-        /** client = HttpClientBuilder.create().setDefaultRequestConfig(
-                RequestConfig.custom().setConnectTimeout(connectionTimeout)
-                        .setConnectionRequestTimeout(connectionTimeout).setSocketTimeout(connectionTimeout).build()
-        ).build();**/
-        this.url = url;
-    }
+
     protected String readInputStream(InputStream inputStream) throws IOException {
         BufferedReader in = new BufferedReader( new InputStreamReader(inputStream));
         String inputLine;

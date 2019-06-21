@@ -6,6 +6,8 @@ import com.zgeorg03.generators.MountainGenerator;
 import com.zgeorg03.generators.SineGenerator;
 import com.zgeorg03.models.Operation;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -18,11 +20,14 @@ public class Configuration {
     private int timeout = 10000;
     private long seed = -1;
     private AbstractGenerator actualGenerator;
-    private List<Operation> operations = new LinkedList<>();
+    private List<Operation> operationsReal = new LinkedList<>();
+    private List<Map<String,Object>> operations = new LinkedList<>();
 
     private List<String> sequence = new LinkedList<>();
     private List<Map<String,Object>> generators;
     private Map<String,AbstractGenerator> actualGenerators = new HashMap<>();
+
+
 
     public List<String> getSequence() {
         return sequence;
@@ -44,13 +49,14 @@ public class Configuration {
         this.actualGenerator = actualGenerator;
     }
 
-    public List<Operation> getOperations() {
-        return operations;
+    public List<Operation> getOperationsReal() {
+        return operationsReal;
     }
 
-    public void setOperations(List<Operation> operations) {
-        this.operations = operations;
-        totalWeight = operations.stream().mapToInt(Operation::getWeight).sum();
+
+    public void setOperationsReal(List<Operation> operationsReal) {
+        this.operationsReal = operationsReal;
+        totalWeight = operationsReal.stream().mapToInt(Operation::getWeight).sum();
     }
 
     public long getSeed() {
@@ -63,13 +69,31 @@ public class Configuration {
 
     public void setTimeout(int timeout) {
         this.timeout = timeout;
+        System.out.println("Timeout configured");
+
     }
 
-    public int getTimeout() {
-        return timeout;
+    public void setOperations(List<Map<String, Object>> operations) throws URISyntaxException, UnsupportedEncodingException {
+        this.operations = operations;
+        for(Map<String, Object> operation : operations){
+            String id = (String) operation.get("id");
+            String method = (String) operation.get("method");
+            int duration = (int) operation.getOrDefault("weight",1) ;
+            String url = (String) operation.getOrDefault("url", "");
+           Operation op;
+            if(method.equalsIgnoreCase("GET")){
+                op = new GetRequest(id,url,duration,timeout);
+                this.operationsReal.add(op);
+
+            }else if(method.equalsIgnoreCase("POST")){
+                op = new PostRequest(id,duration,url,null,timeout);
+                this.operationsReal.add(op);
+            }else{
+                System.out.println("Skipped operation: "+id);
+            }
+
+        }
     }
-
-
 
     //Dynamic
     private Random random;
@@ -79,8 +103,9 @@ public class Configuration {
     private String date;
     public Configuration() {
         this.random = new Random(seed);
-        totalWeight = operations.stream().mapToInt(Operation::getWeight).sum();
+        totalWeight = operationsReal.stream().mapToInt(Operation::getWeight).sum();
         this.throughput = new AtomicReference<>(0f);
+
     }
 
     @Override
@@ -94,7 +119,7 @@ public class Configuration {
                 ", timeout=" + timeout +
                 ", seed=" + seed +
                 ", actualGenerator=" + actualGenerator +
-                ", operations=" + operations +
+                ", operationsReal=" + operationsReal +
                 ", random=" + random +
                 ", lastOperation=" + lastOperation +
                 ", totalWeight=" + totalWeight +
@@ -206,11 +231,13 @@ public class Configuration {
     }
 
 
+    public int getTimeout() {
+        return timeout;
+    }
 
-
-    public Optional<Operation> getNextOperation(long now,int min,int max) {
+    public Optional<Operation> getNextOperation(long now, int min, int max) {
         long duration = now - lastOperation;
-        if(operations.isEmpty())
+        if(operationsReal.isEmpty())
             return Optional.empty();
 
 
@@ -231,7 +258,7 @@ public class Configuration {
 
         float rnd = (float) (Math.random() *totalWeight);
         float currentWeight = 0f;
-        for(Operation operation : operations){
+        for(Operation operation : operationsReal){
             currentWeight+=operation.getWeight();
             if(currentWeight>=rnd)
                 return operation;

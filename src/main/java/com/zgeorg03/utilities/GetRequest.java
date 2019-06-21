@@ -22,18 +22,15 @@ public class GetRequest extends HttpRequest  {
         return params;
     }
 
-    public GetRequest() throws URISyntaxException {
-        super();
-    }
 
-    public GetRequest(String id, String url,int weight) throws URISyntaxException {
-        super(id,weight, url);
+    public GetRequest(String id, String url,int weight,int timeout) throws URISyntaxException {
+        super(id,weight, url,timeout);
         this.params = new LinkedList<>();
         this.url = url;
     }
 
-    public GetRequest(String id, String url,int weight, List<NameValuePair> params) throws URISyntaxException {
-        super(id,weight, url);
+    public GetRequest(String id, String url,int weight, List<NameValuePair> params,int timeout) throws URISyntaxException {
+        super(id,weight, url,timeout);
         this.params = params;
         if(params==null)
             params = new LinkedList<>();
@@ -41,14 +38,6 @@ public class GetRequest extends HttpRequest  {
         this.params = params;
     }
 
-    public GetRequest(String id, String url,int weight, int connectionTimeout, List<NameValuePair> params) throws URISyntaxException {
-        super(id,weight,connectionTimeout,url );
-        this.params = params;
-        if(params==null)
-            params = new LinkedList<>();
-        this.url = url;
-        this.params = params;
-    }
 
     public HttpResponse call() throws Exception {
         uriBuilder = new URIBuilder(url).addParameters(params);

@@ -33,13 +33,8 @@ public class PostRequest extends HttpRequest {
         super.setUrl(url);
     }
 
-    public PostRequest(String id, int weight, String url, List<NameValuePair> params) throws UnsupportedEncodingException {
-        super(id,weight, url);
-        httpPost  = new HttpPost(url);
-        httpPost.setEntity(new UrlEncodedFormEntity(params));
-    }
-    public PostRequest(String id,int weight, String url, List<NameValuePair> params, int timeout) throws UnsupportedEncodingException {
-        super(id,weight,timeout, url);
+    public PostRequest(String id, int weight, String url, List<NameValuePair> params,int timeout) throws UnsupportedEncodingException {
+        super(id,weight, url,timeout);
         httpPost  = new HttpPost(url);
         httpPost.setEntity(new UrlEncodedFormEntity(params));
     }

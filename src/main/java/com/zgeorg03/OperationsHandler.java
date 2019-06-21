@@ -118,7 +118,8 @@ public class OperationsHandler {
                 if (logger.isDebugEnabled())
                     e.printStackTrace();
             } catch (Exception ex) {
-                ex.printStackTrace();
+               // ex.printStackTrace();
+                logger.error(ex.getLocalizedMessage());
             }
         }
     }

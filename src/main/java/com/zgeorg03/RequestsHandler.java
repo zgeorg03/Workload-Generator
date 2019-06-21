@@ -6,6 +6,7 @@ import com.zgeorg03.utilities.GetRequest;
 import com.zgeorg03.utilities.HttpRequest;
 import com.zgeorg03.utilities.HttpResponse;
 import com.zgeorg03.utilities.PostRequest;
+import org.apache.http.conn.ConnectionPoolTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,8 +90,8 @@ public class RequestsHandler implements Runnable {
         while(true){
             try {
                 Future<HttpResponse> future = requests.take();
-                countFinishedReqPerSecond++;
                 HttpResponse httpResponse = future.get();
+                countFinishedReqPerSecond++;
                 int status = httpResponse.getStatus();
                 String id = httpResponse.getId();
                 RealTimeOperationStats stats = operationStats.getOrDefault(id,new RealTimeOperationStats(id));
@@ -101,13 +102,11 @@ public class RequestsHandler implements Runnable {
             } catch (InterruptedException e) {
                 logger.error(e.getLocalizedMessage());
             } catch (ExecutionException e) {
-                e.printStackTrace();
-                    RealTimeOperationStats stats = operationStats.getOrDefault("TimeOut", new RealTimeOperationStats("TimeOut"));
-                    stats.update(timeout, 503);
-                    operationStats.putIfAbsent("TimeOut", stats);
+                RealTimeOperationStats stats = operationStats.getOrDefault("TimeOut", new RealTimeOperationStats("TimeOut"));
+                stats.update(timeout, 503);
+                operationStats.putIfAbsent("TimeOut", stats);
 
             }catch (Exception ex){
-                ex.printStackTrace();
             }
         }
 
