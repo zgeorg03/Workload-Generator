@@ -6,6 +6,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 
 import java.net.URISyntaxException;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -39,6 +40,8 @@ public class GetRequest extends HttpRequest  {
     public GetRequest(String id, String url, int connectionTimeout, List<NameValuePair> params) throws URISyntaxException {
         super(id,connectionTimeout);
         this.params = params;
+        if(params==null)
+            params = new LinkedList<>();
         URIBuilder uriBuilder = new URIBuilder(url).addParameters(params);
         httpGet = new HttpGet(uriBuilder.build());
     }

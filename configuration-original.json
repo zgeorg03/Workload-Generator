@@ -1,6 +1,6 @@
 {
   "config":{
-    "generator" :{
+    "generator2" :{
       "type" : "sine",
       "period" : 120
     },
@@ -11,23 +11,33 @@
 
     },"generator" : {
       "type" : "mountain",
-      "ascent" : 120,
+      "ascent" : 10,
       "plateau" : 43200,
-      "descent" : 120
+      "descent" : 10
 
     },
-    "experiment":"test5",
-    "maxThreads" : 40,
-    "minOperations" :5 ,
-    "maxOperations" : 30,
-    "outputTime" : 5
+    "experiment":"test",
+    "maxThreads" : 80,
+    "minOperations" :20 ,
+    "maxOperations" : 60,
+    "outputTime" : 5,
+    "timeOut" : 10
   },
   "operations":[
     {
-      "operationId": "get1024",
+      "operationId": "q0",
       "weight":0,
-      "url": "https://httpbin.org/bytes/10485761?seed=1",
+      "url": "http://212.101.173.38/2018/",
       "method": "GET"
+    },
+    {
+      "operationId": "q1",
+      "weight":1,
+      "url": "http://10.16.3.150:9090/api/v1/query",
+      "method": "GET",
+      "data":{
+        "query": "sum(netdata_system_cpu_percentage_average{dimension='system'})"
+      }
     }
   ]
 }
