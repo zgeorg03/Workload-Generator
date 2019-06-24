@@ -1,5 +1,7 @@
 ## Workload Generator
 A simple java application to generate artificial load for web-based applications.
+
+![image](https://github.com/zgeorg03/Workload-Generator/blob/experimental/docs/architecture.png)
 ## Features
 TODO
 
