@@ -24,7 +24,7 @@ public class OperationsHandler {
     private long timeStarted; //Time starts
     private int minDelay;
 
-    private final PrintWriter printWriter;
+    private final PrintWriter allRequestsPw;
     private final Map<String,AbstractGenerator> generators;
     private final long totalDurationOfGeneratorsSequence;
 
@@ -33,12 +33,12 @@ public class OperationsHandler {
 
 
 
-    public OperationsHandler(Configuration configuration, RequestsHandler requestsHandler, PrintWriter printWriter) throws Exception {
+    public OperationsHandler(Configuration configuration, RequestsHandler requestsHandler, PrintWriter allRequestsPw) throws Exception {
         this.configuration = configuration;
         this.minDelay = 1000/configuration.getMaxOperationsPerSec();
         this.requestsHandler = requestsHandler;
         this.generators = configuration.getActualGenerators();
-        this.printWriter = printWriter;
+        this.allRequestsPw = allRequestsPw;
 
         this.totalDurationOfGeneratorsSequence = configuration.getSequence().stream()
                 .mapToLong(e->{
@@ -55,12 +55,11 @@ public class OperationsHandler {
         this.generator = generators.values().stream().findFirst().get();
     }
     public void run() {
-        int sleep = (minDelay > 10) ? minDelay - 10 : minDelay;
         timeStarted = System.currentTimeMillis();
         long lastLog = timeStarted;
         logger.info("Starting generator...");
-        printWriter.print(configuration.toCSV());
-        printWriter.print("#time       \tConfRPS\trealRPS\tTPS\tmin_lt\tavg_lt\tmax_lt\tsucc\tredir\tcl_err\tse_err\n");
+        allRequestsPw.print(configuration.toCSV());
+        allRequestsPw.print("#time       \tConfRPS\trealRPS\tTPS\tmin_lt\tavg_lt\tmax_lt\tsucc\tredir\tcl_err\tse_err\n");
 
         while(true){
 
@@ -93,9 +92,9 @@ public class OperationsHandler {
                 if (now - lastLog > configuration.getOutputTime()) {
                     try {
                         System.out.println(requestsHandler.log(lastLog, now, generator.getThroughput().get(), min, max));
-                        printWriter.print(requestsHandler.logCsv(lastLog, now, generator.getThroughput().get(), min, max));
-                        printWriter.print("\n");
-                        printWriter.flush();
+                        allRequestsPw.print(requestsHandler.logCsv(lastLog, now, generator.getThroughput().get(), min, max));
+                        allRequestsPw.print("\n");
+                        allRequestsPw.flush();
 
                         //TODO Decide which generator to choose
                         long duration = now-timeStarted;
@@ -112,7 +111,6 @@ public class OperationsHandler {
 
                 generator.run(now);
 
-                //TimeUnit.MILLISECONDS.sleep(sleep);
             } catch ( UnsupportedEncodingException e) {
                 logger.error(e.getLocalizedMessage());
                 if (logger.isDebugEnabled())

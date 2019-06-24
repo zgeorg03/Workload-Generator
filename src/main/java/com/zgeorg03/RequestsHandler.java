@@ -6,7 +6,6 @@ import com.zgeorg03.utilities.GetRequest;
 import com.zgeorg03.utilities.HttpRequest;
 import com.zgeorg03.utilities.HttpResponse;
 import com.zgeorg03.utilities.PostRequest;
-import org.apache.http.conn.ConnectionPoolTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,20 +29,30 @@ public class RequestsHandler implements Runnable {
     private final Map<String,RealTimeOperationStats> operationStats=new HashMap<>();
 
     private int countRealRequests;
+    private Map<String,Integer> countRealRequestsMap=new HashMap<>();
     private int lastCountRealRequests;
+    private Map<String,Integer> countLastRealRequestsMap=new HashMap<>();
+
+
     private double realRequestsPerSecond;
 
     private int countFinishedReqPerSecond;
+    private Map<String,Integer> countFinishedRequestsMap=new HashMap<>();
     private int lastCountFinishedReqPerSecond;
+    private Map<String,Integer> countLastFinishedRequestsMap=new HashMap<>();
+
     private double finishedRequestsPerSecond;
 
     private final int timeout;
 
     private PercentileStats percentileStats = new PercentileStats();
 
-    public RequestsHandler(Executor executor, int timeout) {
+    private final LogService logService;
+
+    public RequestsHandler(Executor executor, int timeout, LogService logService) {
         this.requests = new ExecutorCompletionService<>(executor);
         this.timeout = timeout;
+        this.logService = logService;
         executor.execute(this);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> onShutDown()));
@@ -61,6 +70,10 @@ public class RequestsHandler implements Runnable {
 
         String stats = operationStats.values()
                 .stream().map(RealTimeOperationStats::toString).collect(Collectors.joining("\n\t","\t",""));
+
+        logService.logOperations(lastLog,now,configuredRPS, operationStats,countRealRequestsMap,countLastRealRequestsMap,
+                countFinishedRequestsMap,countLastFinishedRequestsMap);
+
 
         //TODO this is ok, but more computational expensive
         //float throughputPerSecond = operationStats.values().stream().mapToLong(RealTimeOperationStats::getCount).sum()/((now-lastLog)/1000.0f);
@@ -83,6 +96,20 @@ public class RequestsHandler implements Runnable {
         operationStats.clear();
         lastCountRealRequests = countRealRequests;
         lastCountFinishedReqPerSecond=countFinishedReqPerSecond;
+
+        countRealRequestsMap.entrySet().forEach(e->{
+            String key = e.getKey();
+            int value  = e.getValue();
+            countLastRealRequestsMap.put(key,value);
+        });
+
+        countFinishedRequestsMap.entrySet().forEach(e->{
+            String key = e.getKey();
+            int value  = e.getValue();
+            countLastFinishedRequestsMap.put(key,value);
+        });
+
+
     }
 
     @Override
@@ -94,6 +121,7 @@ public class RequestsHandler implements Runnable {
                 countFinishedReqPerSecond++;
                 int status = httpResponse.getStatus();
                 String id = httpResponse.getId();
+                increaseFinishedRequestsCounter(id);
                 RealTimeOperationStats stats = operationStats.getOrDefault(id,new RealTimeOperationStats(id));
                 stats.update(httpResponse.getDuration(), status);
                 //percentileStats.update(id,httpResponse.getDuration());
@@ -112,17 +140,31 @@ public class RequestsHandler implements Runnable {
 
     }
 
+
     public void execute(HttpRequest operation) throws UnsupportedEncodingException, URISyntaxException {
 
         if(operation instanceof PostRequest ){
             requests.submit((PostRequest)operation);
             countRealRequests++;
+            increaseRealRequestsCounter(operation.getId());
+
         }else if(operation instanceof GetRequest){
             requests.submit((GetRequest)operation);
             countRealRequests++;
+            increaseRealRequestsCounter(operation.getId());
+
         }else{
             logger.info("Unsupported requests");
         }
+    }
+
+    private void increaseRealRequestsCounter(String id) {
+        int realRequests = countRealRequestsMap.getOrDefault(id,0);
+        countRealRequestsMap.put(id,realRequests+1);
+    }
+    private void increaseFinishedRequestsCounter(String id) {
+        int realRequests = countFinishedRequestsMap.getOrDefault(id,0);
+        countFinishedRequestsMap.put(id,realRequests+1);
     }
 
     public String logCsv(long lastLog, long now, float throughput, int min, int max) {

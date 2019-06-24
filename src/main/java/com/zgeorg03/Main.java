@@ -21,27 +21,35 @@ public class Main {
 
         String path = "./config.yml";
 
+
         File parent = Paths.get(path).toFile().getParentFile();
+
         if(!parent.exists()){
             if(parent.mkdirs())
                 logger.info("Created dir: "+ Paths.get(path).toFile().getAbsolutePath());
         }
 
+
         Configuration configuration = ConfigurationLoader.load(path);
 
         logger.info(configuration.toString());
 
+
+
         String dateFull = new SimpleDateFormat("yyyy-MM-dd_hhmm") .format(new java.util.Date(System.currentTimeMillis()));
         String date = dateFull.substring(0,dateFull.length()-5);
+        configuration.setDate(date);
 
 
-        PrintWriter printWriter = new PrintWriter(new FileWriter(Paths.get(parent.getAbsolutePath(),date+"_"+configuration.getExperiment()+".log").toFile()));
+
+        final LogService logService = new LogService(parent.getAbsolutePath(), configuration,date);
+        PrintWriter allCsvPw = logService.getAllCsvPw();
 
         ExecutorService executorService = Executors.newFixedThreadPool(configuration.getThreads());
 
-        RequestsHandler requestsHandler = new RequestsHandler(executorService, configuration.getTimeout());
+        RequestsHandler requestsHandler = new RequestsHandler(executorService, configuration.getTimeout(), logService);
 
-        OperationsHandler operationsHandler = new OperationsHandler(configuration, requestsHandler, printWriter);
+        OperationsHandler operationsHandler = new OperationsHandler(configuration, requestsHandler, allCsvPw);
 
         operationsHandler.run();
     }

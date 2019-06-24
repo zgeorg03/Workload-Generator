@@ -80,7 +80,8 @@ public class Configuration {
             String method = (String) operation.get("method");
             int duration = (int) operation.getOrDefault("weight",1) ;
             String url = (String) operation.getOrDefault("url", "");
-           Operation op;
+
+            Operation op;
             if(method.equalsIgnoreCase("GET")){
                 op = new GetRequest(id,url,duration,timeout);
                 this.operationsReal.add(op);
@@ -93,6 +94,7 @@ public class Configuration {
             }
 
         }
+        totalWeight = this.operationsReal.stream().mapToInt(Operation::getWeight).sum();
     }
 
     //Dynamic
@@ -101,11 +103,16 @@ public class Configuration {
     private float totalWeight; // 1-> MaxOperationsPerSec
     private AtomicReference<Float> throughput;
     private String date;
+
     public Configuration() {
         this.random = new Random(seed);
         totalWeight = operationsReal.stream().mapToInt(Operation::getWeight).sum();
         this.throughput = new AtomicReference<>(0f);
 
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     @Override
